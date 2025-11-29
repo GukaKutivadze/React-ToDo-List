@@ -78,7 +78,7 @@ function Card({ card, likedCards, toggleLike }) {
         <span className="badge">{card.tag}</span>
       </div>
       <div className="card-body">
-        <h3 className="card-title">{`${card.title} - ${card.price}`}</h3>
+        <h3 className="card-title">{`${card.title} - ${card.price}$`}</h3>
         <p className="card-desc">{card.description}</p>
         <div className="card-actions">
           <button className="btn ghost" onClick={() => toggleLike(card.id)}>
@@ -92,36 +92,37 @@ function Card({ card, likedCards, toggleLike }) {
 }
 
 export default function App() {
-  const [searchTextByTitle, setSearchTextByTitle] = useState("");
-  const [searchTextByDescription, setSearchTextByDescription] = useState("");
-  const [filteredCards, setFilteredCards] = useState(sampleCards);
   const [likedCards, setLikedCards] = useState([]);
+  const [sortOption, setSortOption] = useState("none");
+  const [sortedCards, setSortedCards] = useState(sampleCards);
 
   useEffect(() => {
-    const titleToLower = searchTextByTitle.toLowerCase();
-    const descriptionToLower = searchTextByDescription.toLowerCase();
-    const newFilteredCards = sampleCards.filter(
-      (card) =>
-        card.title.toLowerCase().includes(titleToLower) &&
-        card.description.toLowerCase().includes(descriptionToLower)
-    );
-    setFilteredCards(newFilteredCards);
-  }, [searchTextByTitle, searchTextByDescription]);
+    let sorted = [...sampleCards];
 
-  const handleTitleInputChange = (e) => setSearchTextByTitle(e.target.value);
-  const handleDescriptionInputChange = (e) => setSearchTextByDescription(e.target.value);
+    if (sortOption === "low-high") {
+      sorted.sort((a, b) => a.price - b.price);
+    }
+    if (sortOption === "high-low") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+    if (sortOption === "title") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    setSortedCards(sorted);
+  }, [sortOption]);
 
   const toggleLike = (id) => {
     if (likedCards.includes(id)) {
-      setLikedCards(likedCards.filter((cardId) => cardId !== id));
+      setLikedCards(likedCards.filter((c) => c !== id));
     } else {
       setLikedCards([...likedCards, id]);
     }
   };
 
   const totalPrice = sampleCards
-    .filter((card) => likedCards.includes(card.id))
-    .reduce((sum, card) => sum + card.price, 0);
+    .filter((c) => likedCards.includes(c.id))
+    .reduce((sum, c) => sum + c.price, 0);
 
   return (
     <>
@@ -129,28 +130,34 @@ export default function App() {
       <div className="site-main">
         <div className="container">
           <div className="toolbar">
-            <h2 id="explore" className="section-title">Explore</h2>
-            <input
+            <h2 id="explore" className="section-title">
+              Explore
+            </h2>
+
+            <select
               className="input"
-              type="search"
-              placeholder="Search cards by title..."
-              value={searchTextByTitle}
-              onChange={handleTitleInputChange}
-            />
-            <input
-              className="input"
-              type="search"
-              placeholder="Search cards by description..."
-              value={searchTextByDescription}
-              onChange={handleDescriptionInputChange}
-            />
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="none">Sort by...</option>
+              <option value="low-high">Price: Low → High</option>
+              <option value="high-low">Price: High → Low</option>
+              <option value="title">Title A → Z</option>
+            </select>
           </div>
+
           <div className="grid">
-            {filteredCards.map((c) => (
-              <Card key={c.id} card={c} likedCards={likedCards} toggleLike={toggleLike} />
+            {sortedCards.map((c) => (
+              <Card
+                key={c.id}
+                card={c}
+                likedCards={likedCards}
+                toggleLike={toggleLike}
+              />
             ))}
           </div>
-          <h1>Liked cards total price is - {totalPrice}</h1>
+
+          <h1>Liked cards total price is - {totalPrice}$</h1>
         </div>
       </div>
     </>
