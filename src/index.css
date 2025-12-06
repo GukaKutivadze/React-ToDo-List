@@ -408,6 +408,7 @@ body {
   font-weight: 600;
   box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
   transition: 0.15s;
+  margin-left: 385px;
 }
 
 .close-btn:hover {
@@ -471,6 +472,9 @@ body {
 
 .edit-panel {
   width: 500px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
   max-width: 92%;
   background: #ffffff;
   border-radius: 16px;
@@ -504,6 +508,9 @@ body {
 }
 
 .edit-field label {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
   font-size: 14px;
   margin-bottom: 6px;
   color: var(--text);
@@ -570,4 +577,10 @@ body {
     width: 94%;
     padding: 20px;
   }
+}
+
+.edit-panel input, textarea {
+   border: 1px solid black;
+  border-radius: 7px;
+  padding: 15px;
 }
